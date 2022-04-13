@@ -12,10 +12,14 @@ namespace Concessionaire.Data
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<VehicleType> VehicleTypes { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<VehicleType>().HasIndex(vt => vt.Name).IsUnique();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Concessionaire.Data.Entities.Country>
+﻿@model IEnumerable<Concessionaire.Data.Entities.VehicleType>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,11 +9,12 @@
 <p>
     <a asp-action="Create" class="btn btn-outline-primary">Crear Nuevo</a>
 </p>
+
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Países</h3>
+                <h3 class="panel-title">Tipos de vehículo</h3>
             </div>
             <div class="panel-body">
                 <table class="table table-hover table-responsive table-striped" id="MyTable">
@@ -67,3 +68,4 @@
     </script>
 }
 
+ 

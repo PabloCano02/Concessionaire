@@ -1,16 +1,15 @@
-﻿#nullable disable
-using Concessionaire.Data;
+﻿using Concessionaire.Data;
 using Concessionaire.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concessionaire.Controllers
 {
-    public class CountriesController : Controller
+    public class VehiclesTypesController : Controller
     {
         private readonly DataContext _context;
 
-        public CountriesController(DataContext context)
+        public VehiclesTypesController(DataContext context)
         {
             _context = context;
         }
@@ -18,25 +17,7 @@ namespace Concessionaire.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Countries.ToListAsync());
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Country country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (country == null)
-            {
-                return NotFound();
-            }
-
-            return View(country);
+            return View(await _context.VehicleTypes.ToListAsync());
         }
 
         [HttpGet]
@@ -47,13 +28,13 @@ namespace Concessionaire.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Country country)
+        public async Task<IActionResult> Create(VehicleType vehicleType)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Add(country);
+                    _context.Add(vehicleType);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
 
@@ -62,7 +43,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
+                        ModelState.AddModelError(string.Empty, "Ya existe un tipo de vehículo con el mismo nombre.");
                     }
                     else
                     {
@@ -74,7 +55,7 @@ namespace Concessionaire.Controllers
                     ModelState.AddModelError(string.Empty, exception.Message);
                 }
             }
-            return View(country);
+            return View(vehicleType);
         }
 
         [HttpGet]
@@ -85,20 +66,20 @@ namespace Concessionaire.Controllers
                 return NotFound();
             }
 
-            Country country = await _context.Countries.FindAsync(id);
-            if (country == null)
+            VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
+            if (vehicleType == null)
             {
                 return NotFound();
             }
 
-            return View(country);
+            return View(vehicleType);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Country country)
+        public async Task<IActionResult> Edit(int id, VehicleType vehicleType)
         {
-            if (id != country.Id)
+            if (id != vehicleType.Id)
             {
                 return NotFound();
             }
@@ -107,7 +88,7 @@ namespace Concessionaire.Controllers
             {
                 try
                 {
-                    _context.Update(country);
+                    _context.Update(vehicleType);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
 
@@ -116,7 +97,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
+                        ModelState.AddModelError(string.Empty, "Ya existe un tipo de vehículo con el mismo nombre.");
                     }
                     else
                     {
@@ -130,7 +111,7 @@ namespace Concessionaire.Controllers
 
             }
 
-            return View(country);
+            return View(vehicleType);
         }
 
         [HttpGet]
@@ -141,24 +122,44 @@ namespace Concessionaire.Controllers
                 return NotFound();
             }
 
-            Country country = await _context.Countries
+            VehicleType vehicleType = await _context.VehicleTypes
                 .FirstOrDefaultAsync(c => c.Id == id);
-            if (country == null)
+            if (vehicleType == null)
             {
                 return NotFound();
             }
 
-            return View(country);
+            return View(vehicleType);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Country country = await _context.Countries.FindAsync(id);
-            _context.Countries.Remove(country);
+            VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
+            _context.VehicleTypes.Remove(vehicleType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            VehicleType vehicleType = await _context.VehicleTypes
+                .FirstOrDefaultAsync(vt => vt.Id == id);
+            if (vehicleType == null)
+            {
+                return NotFound();
+            }
+
+            return View(vehicleType);
+        }
+
     }
 }
