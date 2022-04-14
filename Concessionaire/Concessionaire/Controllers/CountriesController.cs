@@ -2,11 +2,13 @@
 using Concessionaire.Data;
 using Concessionaire.Data.Entities;
 using Concessionaire.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concessionaire.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CountriesController : Controller
     {
         private readonly DataContext _context;

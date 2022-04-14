@@ -1,4 +1,5 @@
 ﻿using Concessionaire.Data.Entities;
+using Concessionaire.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Concessionaire.Helpers
@@ -15,5 +16,8 @@ namespace Concessionaire.Helpers
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
 
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
     }
 }

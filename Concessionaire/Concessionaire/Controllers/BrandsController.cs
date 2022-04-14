@@ -1,10 +1,12 @@
 ﻿using Concessionaire.Data;
 using Concessionaire.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concessionaire.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BrandsController : Controller
     {
         private readonly DataContext _context;

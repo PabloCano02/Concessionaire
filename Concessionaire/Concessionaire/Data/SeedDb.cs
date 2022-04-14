@@ -21,8 +21,9 @@ namespace Concessionaire.Data
             await CheckBrandsAsync();
             await CheckCountriesAsync();
             await CheckRolesAsync();
-            await CheckUserAsync("1010", "Juan", "Cano", "cano@yopmail.com", "300 422 4861", "Cra 50 # 133 sur 80", UserType.Admin);
             await CheckVehicleTypesAsync();
+            await CheckUserAsync("1010", "Juan", "Cano", "cano@yopmail.com", "300 422 4861", "Cra 50 # 133 sur 80", UserType.Admin);
+            await CheckUserAsync("2020", "Daniela", "Quintero", "quintero@yopmail.com", "311 515 3245", "Calle 12 # 40 - 20", UserType.User);
         }
 
         private async Task<User> CheckUserAsync(
