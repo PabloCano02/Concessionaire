@@ -3,6 +3,7 @@ using Concessionaire.Data.Entities;
 using Concessionaire.Enums;
 using Concessionaire.Helpers;
 using Concessionaire.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -148,5 +149,107 @@ namespace Concessionaire.Controllers
 
             return Json(state.Cities.OrderBy(c => c.Name));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeUser()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            EditUserViewModel model = new()
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                ImageId = user.ImageId,
+                Cities = await _combosHelper.GetComboCitiesAsync(user.City.State.Id),
+                CityId = user.City.Id,
+                Countries = await _combosHelper.GetComboCountriesAsync(),
+                CountryId = user.City.State.Country.Id,
+                StateId = user.City.State.Id,
+                States = await _combosHelper.GetComboStatesAsync(user.City.State.Country.Id),
+                Id = user.Id,
+                Document = user.Document
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeUser(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Guid imageId = model.ImageId;
+
+                if (model.ImageFile != null)
+                {
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
+                }
+
+                User user = await _userHelper.GetUserAsync(User.Identity.Name);
+
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+                user.ImageId = imageId;
+                user.City = await _context.Cities.FindAsync(model.CityId);
+                user.Document = model.Document;
+
+                await _userHelper.UpdateUserAsync(user);
+                return RedirectToAction("Index", "Home");
+            }
+
+            model.Countries = await _combosHelper.GetComboCountriesAsync();
+            model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
+            model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.OldPassword == model.NewPassword)
+                {
+                    ModelState.AddModelError(string.Empty, "Debes ingresar una contraseña diferente");
+                    return View(model);
+                }
+                
+                User? user = await _userHelper.GetUserAsync(User.Identity.Name);
+                if (user != null)
+                {
+                    IdentityResult? result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ChangeUser");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Contraseña actual incorrecta");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Usuario no encontrado.");
+                }
+            }
+
+            return View(model);
+        }
+
     }
 }
