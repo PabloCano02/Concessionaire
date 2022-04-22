@@ -19,6 +19,10 @@ namespace Concessionaire.Data
 
         public DbSet<State> States { get; set; }
 
+        public DbSet<Vehicle> Vehicles { get; set; }
+
+        public DbSet<VehiclePhoto> VehiclePhotos { get; set; }
+
         public DbSet<VehicleType> VehicleTypes { get; set; }
 
 
@@ -30,6 +34,8 @@ namespace Concessionaire.Data
             modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<VehicleType>().HasIndex(vt => vt.Name).IsUnique();
             modelBuilder.Entity<State>().HasIndex("Name", "CountryId").IsUnique();
+            modelBuilder.Entity<Vehicle>().HasIndex(v => v.Plaque).IsUnique();
+            //modelBuilder.Entity<ProductCategory>().HasIndex("ProductId", "CategoryId").IsUnique();
         }
     }
 }
