@@ -13,7 +13,7 @@ namespace Concessionaire.Helpers
             _context = context;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetComboBrandAsync()
+        public async Task<IEnumerable<SelectListItem>> GetComboBrandsAsync()
         {
             List<SelectListItem> list = await _context.Brands.Select(b => new SelectListItem
             {

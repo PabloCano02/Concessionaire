@@ -4,7 +4,7 @@ namespace Concessionaire.Helpers
 {
     public interface ICombosHelper
     {
-        Task<IEnumerable<SelectListItem>> GetComboBrandAsync();
+        Task<IEnumerable<SelectListItem>> GetComboBrandsAsync();
 
         Task<IEnumerable<SelectListItem>> GetComboCitiesAsync(int stateId);
 

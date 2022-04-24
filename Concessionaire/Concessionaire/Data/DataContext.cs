@@ -35,7 +35,7 @@ namespace Concessionaire.Data
             modelBuilder.Entity<VehicleType>().HasIndex(vt => vt.Name).IsUnique();
             modelBuilder.Entity<State>().HasIndex("Name", "CountryId").IsUnique();
             modelBuilder.Entity<Vehicle>().HasIndex(v => v.Plaque).IsUnique();
-            //modelBuilder.Entity<ProductCategory>().HasIndex("ProductId", "CategoryId").IsUnique();
+            //modelBuilder.Entity<Vehicle>().HasIndex("BrandId", "VehicleTypeId").IsUnique();
         }
     }
 }
