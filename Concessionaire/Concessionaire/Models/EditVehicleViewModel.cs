@@ -38,5 +38,10 @@ namespace Concessionaire.Models
         [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal Price { get; set; }
+
+        [Display(Name = "Disponible")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public bool IsRent { get; set; }
+
     }
 }

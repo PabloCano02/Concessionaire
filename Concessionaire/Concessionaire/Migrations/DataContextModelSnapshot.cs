@@ -234,6 +234,9 @@ namespace Concessionaire.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsRent")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Line")
                         .IsRequired()
                         .HasMaxLength(20)

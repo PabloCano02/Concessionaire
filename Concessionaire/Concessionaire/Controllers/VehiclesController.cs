@@ -19,7 +19,7 @@ namespace Concessionaire.Controllers
         {
             _context = context;
             _combosHelper = combosHelper;
-            _blobHelper = blobHelper ?? throw new ArgumentNullException(nameof(blobHelper));
+            _blobHelper = blobHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -42,7 +42,6 @@ namespace Concessionaire.Controllers
             return View(model);
         }
 
-        //TODO Error with color
         //TODO Change in Blob "products" for "Vehicles"
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,6 +63,7 @@ namespace Concessionaire.Controllers
                     Color = model.Color,
                     Description = model.Description,
                     Price = model.Price,
+                    IsRent = model.IsRent,
                 };
 
                 if (imageId != Guid.Empty)

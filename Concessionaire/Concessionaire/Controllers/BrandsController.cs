@@ -3,6 +3,7 @@ using Concessionaire.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 
 namespace Concessionaire.Controllers
 {
@@ -10,10 +11,12 @@ namespace Concessionaire.Controllers
     public class BrandsController : Controller
     {
         private readonly DataContext _context;
+        private readonly IFlashMessage _flashMessage;
 
-        public BrandsController(DataContext context)
+        public BrandsController(DataContext context, IFlashMessage flashMessage)
         {
             _context = context;
+            _flashMessage = flashMessage;
         }
 
         [HttpGet]

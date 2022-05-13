@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concessionaire.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220422033916_AddVehicleAndVehiclePhotoEntities")]
-    partial class AddVehicleAndVehiclePhotoEntities
+    [Migration("20220504165401_AddProductEntity")]
+    partial class AddProductEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,6 +235,9 @@ namespace Concessionaire.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsRent")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Line")
                         .IsRequired()

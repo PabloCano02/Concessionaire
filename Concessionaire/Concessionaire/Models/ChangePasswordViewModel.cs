@@ -16,7 +16,7 @@ namespace Concessionaire.Models
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string NewPassword { get; set; }
 
-        [Compare("NewPassword", ErrorMessage = "La nueva contraseña y la confirmación no son iguales.")]
+        //[Compare("NewPassword", ErrorMessage = "La nueva contraseña y la confirmación no son iguales.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirmación nueva contraseña")]
         [StringLength(20, MinimumLength = 6, ErrorMessage = "El campo {0} debe tener entre {2} y {1} carácteres.")]

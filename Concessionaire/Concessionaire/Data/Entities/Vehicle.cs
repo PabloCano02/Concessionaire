@@ -39,6 +39,10 @@ namespace Concessionaire.Data.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal Price { get; set; }
 
+        [Display(Name = "Disponible")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public bool IsRent { get; set; }
+
         [Display(Name = "Tipo de vehículo")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public VehicleType VehicleType { get; set; }
