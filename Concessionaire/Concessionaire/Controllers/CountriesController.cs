@@ -5,6 +5,7 @@ using Concessionaire.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 
 namespace Concessionaire.Controllers
 {
@@ -12,10 +13,12 @@ namespace Concessionaire.Controllers
     public class CountriesController : Controller
     {
         private readonly DataContext _context;
+        private readonly IFlashMessage _flashMessage;
 
-        public CountriesController(DataContext context)
+        public CountriesController(DataContext context, IFlashMessage flashMessage)
         {
             _context = context;
+            _flashMessage = flashMessage;
         }
 
         [HttpGet]
@@ -66,6 +69,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Add(country);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El país se ha creado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -73,7 +77,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe un país con el mismo nombre.");
                     }
                     else
                     {
@@ -122,6 +126,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Update(country);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El país se ha editado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -129,7 +134,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe un país con el mismo nombre.");
                     }
                     else
                     {
@@ -172,6 +177,7 @@ namespace Concessionaire.Controllers
             Country country = await _context.Countries.FindAsync(id);
             _context.Countries.Remove(country);
             await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("El país se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(Index));
         }
 
@@ -212,6 +218,7 @@ namespace Concessionaire.Controllers
                     };
                     _context.Add(state);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El departamento / estado se ha creado de manera exitosa.");
                     return RedirectToAction(nameof(Details), new { Id = model.CountryId });
 
                 }
@@ -219,7 +226,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un departamento/estado con el mismo nombre en este país.");
+                        _flashMessage.Danger("Ya existe un departamento/estado con el mismo nombre en este país.");
                     }
                     else
                     {
@@ -280,6 +287,7 @@ namespace Concessionaire.Controllers
                     };
                     _context.Update(state);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El departamento / estado se ha editado de manera exitosa.");
                     return RedirectToAction(nameof(Details), new { Id = model.CountryId });
 
                 }
@@ -287,7 +295,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un departamento/estado con el mismo nombre en este país.");
+                        _flashMessage.Danger("Ya existe un departamento/estado con el mismo nombre en este país.");
                     }
                     else
                     {
@@ -360,6 +368,7 @@ namespace Concessionaire.Controllers
                     };
                     _context.Add(city);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("La ciudad se ha creado de manera exitosa.");
                     return RedirectToAction(nameof(DetailsState), new { Id = model.StateId });
 
                 }
@@ -367,7 +376,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe una ciudad con el mismo nombre en este departamento/estado.");
+                        _flashMessage.Danger("Ya existe una ciudad con el mismo nombre en este departamento/estado.");
                     }
                     else
                     {
@@ -428,6 +437,7 @@ namespace Concessionaire.Controllers
                     };
                     _context.Update(city);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("La ciudad se ha editado de manera exitosa.");
                     return RedirectToAction(nameof(DetailsState), new { Id = model.StateId });
 
                 }
@@ -435,7 +445,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe una ciudad con el mismo nombre en este departamento/estado.");
+                        _flashMessage.Danger("Ya existe una ciudad con el mismo nombre en este departamento/estado.");
                     }
                     else
                     {
@@ -499,6 +509,7 @@ namespace Concessionaire.Controllers
                 .FirstOrDefaultAsync(s => s.Id == id);
             _context.States.Remove(state);
             await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("El departamento / estado se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(Details), new { Id = state.Country.Id });
         }
 
@@ -530,6 +541,7 @@ namespace Concessionaire.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
             _context.Cities.Remove(city);
             await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("La ciudad se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(DetailsState), new { Id = city.State.Id });
         }
 

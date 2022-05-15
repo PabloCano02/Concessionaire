@@ -3,6 +3,7 @@ using Concessionaire.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 
 namespace Concessionaire.Controllers
 {
@@ -10,10 +11,12 @@ namespace Concessionaire.Controllers
     public class VehiclesTypesController : Controller
     {
         private readonly DataContext _context;
+        private readonly IFlashMessage _flashMessage;
 
-        public VehiclesTypesController(DataContext context)
+        public VehiclesTypesController(DataContext context, IFlashMessage flashMessage)
         {
             _context = context;
+            _flashMessage = flashMessage;
         }
 
         [HttpGet]
@@ -38,6 +41,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Add(vehicleType);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El tipo de vehículo se ha creado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -45,7 +49,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un tipo de vehículo con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe un tipo de vehículo con el mismo nombre.");
                     }
                     else
                     {
@@ -92,6 +96,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Update(vehicleType);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("El tipo de vehículo se ha editado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -99,7 +104,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un tipo de vehículo con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe un tipo de vehículo con el mismo nombre.");
                     }
                     else
                     {
@@ -141,6 +146,7 @@ namespace Concessionaire.Controllers
             VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
             _context.VehicleTypes.Remove(vehicleType);
             await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("El tipo de vehículo se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(Index));
         }
 

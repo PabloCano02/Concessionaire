@@ -41,6 +41,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Add(brand);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("La marca se ha creado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -48,7 +49,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe una marca con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe una marca con el mismo nombre.");
                     }
                     else
                     {
@@ -95,6 +96,7 @@ namespace Concessionaire.Controllers
                 {
                     _context.Update(brand);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("La marca se ha editado de manera exitosa.");
                     return RedirectToAction(nameof(Index));
 
                 }
@@ -102,7 +104,7 @@ namespace Concessionaire.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe una marca con el mismo nombre.");
+                        _flashMessage.Danger("Ya existe una marca con el mismo nombre.");
                     }
                     else
                     {
@@ -144,6 +146,7 @@ namespace Concessionaire.Controllers
             Brand brand = await _context.Brands.FindAsync(id);
             _context.Brands.Remove(brand);
             await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("La marca se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(Index));
         }
 
