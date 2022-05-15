@@ -23,3 +23,7 @@ table {
     width: 100%;
     border: 1px solid #ddd;
 }
+
+.justify {
+    text-align: justify;
+}
