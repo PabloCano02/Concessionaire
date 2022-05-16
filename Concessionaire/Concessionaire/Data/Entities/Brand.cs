@@ -12,5 +12,9 @@ namespace Concessionaire.Data.Entities
         public string Name { get; set; }
 
         public ICollection<Vehicle> Vehicles { get; set; }
+
+        [Display(Name = "Número de vehículos")]
+        public int VehiclesNumber => Vehicles == null ? 0 : Vehicles.Count();
+
     }
 }

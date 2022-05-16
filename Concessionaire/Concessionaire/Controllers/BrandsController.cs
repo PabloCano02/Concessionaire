@@ -22,7 +22,9 @@ namespace Concessionaire.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Brands.ToListAsync());
+            return View(await _context.Brands
+                .Include(b=>b.Vehicles)
+                .ToListAsync());
         }
 
         [HttpGet]
