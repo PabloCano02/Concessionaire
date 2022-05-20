@@ -45,25 +45,27 @@ namespace Concessionaire.Controllers
         //TODO Change in Blob "products" for "Vehicles"
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateVehicleViewModel model)
+        public async Task<IActionResult> Create(CreateVehicleViewModel vehicleModel)
         {
             if (ModelState.IsValid)
             {
                 Guid imageId = Guid.Empty;
-                if (model.ImageFile != null)
+                if (vehicleModel.ImageFile != null)
                 {
-                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
+                    imageId = await _blobHelper.UploadBlobAsync(vehicleModel.ImageFile, "products");
                 }
 
                 Vehicle vehicle = new()
                 {
-                    Plaque = model.Plaque,
-                    Line = model.Line,
-                    Model = model.Model,
-                    Color = model.Color,
-                    Description = model.Description,
-                    Price = model.Price,
-                    IsRent = model.IsRent,
+                    Plaque = vehicleModel.Plaque,
+                    Line = vehicleModel.Line,
+                    Model = vehicleModel.Model,
+                    Color = vehicleModel.Color,
+                    Description = vehicleModel.Description,
+                    Price = vehicleModel.Price,
+                    IsRent = vehicleModel.IsRent,
+                    Brand = await _context.Brands.FindAsync(vehicleModel.BrandId),
+                    VehicleType = await _context.VehicleTypes.FindAsync(vehicleModel.VehicleTypeId)
                 };
 
                 if (imageId != Guid.Empty)
@@ -97,10 +99,9 @@ namespace Concessionaire.Controllers
                 }
             }
 
-            model.Brands = await _combosHelper.GetComboBrandsAsync();
-            model.VehicleTypes = await _combosHelper.GetComboVehicleTypesAsync();
-            return View(model);
+            vehicleModel.Brands = await _combosHelper.GetComboBrandsAsync();
+            vehicleModel.VehicleTypes = await _combosHelper.GetComboVehicleTypesAsync();
+            return View(vehicleModel);
         }
-
     }
 }

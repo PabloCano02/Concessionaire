@@ -1,6 +1,7 @@
 ﻿using Concessionaire.Data.Entities;
 using Concessionaire.Enums;
 using Concessionaire.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Concessionaire.Data
 {
@@ -24,55 +25,58 @@ namespace Concessionaire.Data
             await CheckCountriesAsync();
             await CheckRolesAsync();
             await CheckVehicleTypesAsync();
-            //await CheckVehiclesAsync();
+            await CheckVehiclesAsync();
             await CheckUserAsync("1010", "Brad", "Pitt", "brad@yopmail.com", "300 422 4861", "Cra 50 # 133 sur 80", "Brad.jpg", UserType.Admin);
             await CheckUserAsync("2020", "Angelina", "Jolie", "angelina@yopmail.com", "311 515 3245", "Calle 12 # 40 - 20", "Angelina.jpg", UserType.User);
         }
 
-        //private async Task CheckVehiclesAsync()
-        //{
-        //    if (!_context.Vehicles.Any())
-        //    {
-        //        await AddVehicleAsync("ASD123", "Aveo", 2022, "Negro", "Confortable para la familia", 180000M, true, new List<string>() { "Aveo.jpg" });
-        //        await AddVehicleAsync("LKJ987", "Captiva", 2022, "Blanco", "El mejor vehículo para viajar", 300000M, false, new List<string>() { "ChevroletCaptiva.png" });
-        //        await AddVehicleAsync("TJH567", "CX30", 2022, "Gris", "El mejor vehículo para disfrutar de la ciudad", 200000M, false, new List<string>() { "MazdaCX30.png" });
-        //        await AddVehicleAsync("HOX67D", "NKD 125", 2022, "Negro", "Ideal para ir al trabajo", 80000M, true, new List<string>() { "AKTNKD125.png" });
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
+        private async Task CheckVehiclesAsync()
+        {
+            if (!_context.Vehicles.Any())
+            {
+                await AddVehicleAsync("ASD123", "Aveo", 2022, "Negro", "Confortable para la familia", 180000M, true, new List<string>() { "Aveo.jpg" }, "Chevrolet", "Carro");
+                //await AddVehicleAsync("LKJ987", "Captiva", 2022, "Blanco", "El mejor vehículo para viajar", 300000M, false, new List<string>() { "ChevroletCaptiva.png" });
+                //await AddVehicleAsync("TJH567", "CX30", 2022, "Gris", "El mejor vehículo para disfrutar de la ciudad", 200000M, false, new List<string>() { "MazdaCX30.png" });
+                //await AddVehicleAsync("HOX67D", "NKD 125", 2022, "Negro", "Ideal para ir al trabajo", 80000M, true, new List<string>() { "AKTNKD125.png" });
+                await _context.SaveChangesAsync();
+            }
+        }
 
-        //private async Task AddVehicleAsync(string plaque, string line, int model, string color, string description, decimal price, bool isRent, List<string> images)
-        //{
-        //    Vehicle vehicle = new()
-        //    {
-        //        Plaque = plaque,
-        //        Line = line,
-        //        Model = model,
-        //        Color = color,
-        //        Description = description,
-        //        Price = price,
-        //        IsRent = isRent,
-                //Brand = new List<Brand>(),
-                //VehicleType = new List<VehicleType>(),
-                //VehiclePhotos = new List<VehiclePhoto>()
-            //};
+        private async Task AddVehicleAsync(
+            string plaque, 
+            string line, 
+            int model, 
+            string color, 
+            string description, 
+            decimal price, 
+            bool isRent, 
+            List<string> images, 
+            string brand, 
+            string vehicleType)
+        {
+            Vehicle vehicle = new()
+            {
+                Plaque = plaque,
+                Line = line,
+                Model = model,
+                Color = color,
+                Description = description,
+                Price = price,
+                IsRent = isRent,
+                Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Name == brand),
+                VehicleType = await _context.VehicleTypes.FirstOrDefaultAsync(vt => vt.Name == vehicleType),
+                VehiclePhotos = new List<VehiclePhoto>()
+            };
 
-            //foreach (string? brand in brands)
-            //{
-            //    prodcut.ProductCategories.Add(new ProductCategory { Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category) });
+            foreach (string image in images)
+            {
+                Guid imageId = await _blobHelper.UploadBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\vehicles\\{image}", "products");
+                vehicle.VehiclePhotos.Add(new VehiclePhoto { ImageId = imageId });
+            }
 
-            //    vehicle.Brand.Add(new Brand { Brand = await _context.Brands.FirstOrDefaultAsync(b => b.Name == brand) });
-            //}
+            _context.Vehicles.Add(vehicle);
 
-        //    foreach (string? image in images)
-        //    {
-        //        Guid imageId = await _blobHelper.UploadBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\vehicles\\{image}", "vehicles");
-        //        vehicle.VehiclePhotos.Add(new VehiclePhoto { ImageId = imageId });
-        //    }
-
-        //    _context.Vehicles.Add(vehicle);
-
-        //}
+        }
 
         private async Task<User> CheckUserAsync(
             string document,
