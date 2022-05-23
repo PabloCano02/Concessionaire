@@ -5,6 +5,7 @@ using Concessionaire.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 
 namespace Concessionaire.Controllers
 {
@@ -14,12 +15,14 @@ namespace Concessionaire.Controllers
         private readonly DataContext _context;
         private readonly ICombosHelper _combosHelper;
         private readonly IBlobHelper _blobHelper;
+        private readonly IFlashMessage _flashMessage;
 
-        public VehiclesController(DataContext context, ICombosHelper combosHelper, IBlobHelper blobHelper)
+        public VehiclesController(DataContext context, ICombosHelper combosHelper, IBlobHelper blobHelper, IFlashMessage flashMessage)
         {
             _context = context;
             _combosHelper = combosHelper;
             _blobHelper = blobHelper;
+            _flashMessage = flashMessage;
         }
 
         public async Task<IActionResult> Index()
@@ -80,22 +83,23 @@ namespace Concessionaire.Controllers
                 {
                     _context.Add(vehicle);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("Vehículo adicionado con éxito.");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        ModelState.AddModelError(string.Empty, "Ya existe un vehículo con la misma placa.");
+                        _flashMessage.Danger("Ya existe un vehículo con la misma placa.");
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                        _flashMessage.Danger(dbUpdateException.InnerException.Message);
                     }
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, exception.Message);
+                    _flashMessage.Danger(exception.Message);
                 }
             }
 
@@ -103,5 +107,215 @@ namespace Concessionaire.Controllers
             vehicleModel.VehicleTypes = await _combosHelper.GetComboVehicleTypesAsync();
             return View(vehicleModel);
         }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Vehicle vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            EditVehicleViewModel vehicleModel = new()
+            {
+                Id = vehicle.Id,
+                Plaque = vehicle.Plaque,
+                Line = vehicle.Line,
+                Model = vehicle.Model,
+                Color = vehicle.Color,
+                Description = vehicle.Description,
+                Price = vehicle.Price,
+                IsRent = vehicle.IsRent,
+            };
+
+            return View(vehicleModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, EditVehicleViewModel vehicleModel)
+        {
+            if (id != vehicleModel.Id)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                Vehicle vehicle = await _context.Vehicles.FindAsync(vehicleModel.Id);
+                vehicle.Plaque = vehicleModel.Plaque;
+                vehicle.Line = vehicleModel.Line;
+                vehicle.Model = vehicleModel.Model;
+                vehicle.Color = vehicleModel.Color;
+                vehicle.Description = vehicleModel.Description;
+                vehicle.Price = vehicleModel.Price;
+                vehicle.IsRent = vehicleModel.IsRent;
+
+                _context.Update(vehicle);
+                await _context.SaveChangesAsync();
+                _flashMessage.Confirmation("Vehículo editado con éxito.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                {
+                    _flashMessage.Danger("Ya existe un vehículo con la misma placa.");
+                }
+                else
+                {
+                    _flashMessage.Danger(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                _flashMessage.Danger(exception.Message);
+            }
+
+            return View(vehicleModel);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Vehicle vehicle = await _context.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.VehicleType)
+                .Include(v => v.VehiclePhotos)
+                .FirstOrDefaultAsync(v => v.Id == id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            return View(vehicle);
+        }
+
+        public async Task<IActionResult> AddImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Vehicle vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            AddVehiclePhotoViewModel model = new()
+            {
+                VehicleId = vehicle.Id,
+            };
+
+            return View(model);
+        }
+
+        //TODO: change "products" for blob "vehicles"
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddImage(AddVehiclePhotoViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                Guid imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
+                Vehicle vehicle = await _context.Vehicles.FindAsync(model.VehicleId);
+                VehiclePhoto vehiclePhoto = new()
+                {
+                    Vehicle = vehicle,
+                    ImageId = imageId,
+                };
+
+                try
+                {
+                    _context.Add(vehiclePhoto);
+                    await _context.SaveChangesAsync();
+                    _flashMessage.Confirmation("Imagen adicionada con éxito.");
+                    return RedirectToAction(nameof(Details), new { Id = vehicle.Id });
+                }
+                catch (Exception exception)
+                {
+                    _flashMessage.Danger(exception.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            VehiclePhoto vehiclePhoto = await _context.VehiclePhotos
+                .Include(vp => vp.Vehicle)
+                .FirstOrDefaultAsync(vp => vp.Id == id);
+            if (vehiclePhoto == null)
+            {
+                return NotFound();
+            }
+
+            await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "products");
+            _context.VehiclePhotos.Remove(vehiclePhoto);
+            await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("Imagen removida con éxito.");
+            return RedirectToAction(nameof(Details), new { Id = vehiclePhoto.Vehicle.Id });
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Vehicle vehicle = await _context.Vehicles
+                .Include(v => v.VehiclePhotos)
+                .Include(v => v.VehicleType)
+                .Include(v => v.Brand)
+                .FirstOrDefaultAsync(v => v.Id == id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            return View(vehicle);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Vehicle deleteModel)
+        {
+            Vehicle vehicle = await _context.Vehicles
+                .Include(v => v.VehiclePhotos)
+                .Include(v => v.VehicleType)
+                .Include(v => v.Brand)
+                .FirstOrDefaultAsync(v => v.Id == deleteModel.Id);
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("Vehículo borrado con éxito.");
+
+            foreach (VehiclePhoto vehiclePhoto in vehicle.VehiclePhotos)
+            {
+                await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "products");
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

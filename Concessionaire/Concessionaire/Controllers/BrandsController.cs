@@ -97,7 +97,6 @@ namespace Concessionaire.Controllers
                     {
                         _flashMessage.Danger(dbUpdateException.InnerException.Message);
                     }
-                    return View(brand);
                 }
                 catch (Exception exception)
                 {

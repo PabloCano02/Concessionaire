@@ -1,0 +1,18 @@
+﻿@model Concessionaire.Data.Entities.Vehicle
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Borrar</h1>
+
+<h3>Esta seguro que querer borrar?</h3>
+<div>
+    <partial name="_DetailsVehicle" />    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Brand" />
+        <input type="hidden" asp-for="VehicleType" />
+        <input type="submit" value="Borrar" class="btn btn-outline-danger" />
+        <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
+    </form>
+</div>

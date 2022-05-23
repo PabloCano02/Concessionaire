@@ -7,31 +7,26 @@
             <select asp-for="VehicleTypeId" asp-items="Model.VehicleTypes" class="form-control"></select>
             <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="BrandId" class="control-label"></label>
             <select asp-for="BrandId" asp-items="Model.Brands" class="form-control"></select>
             <span asp-validation-for="BrandId" class="text-danger"></span>
         </div>
-        
         <div class="form-group">
             <label asp-for="Model" class="control-label"></label>
             <input asp-for="Model" class="form-control" />
             <span asp-validation-for="Model" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="Line" class="control-label"></label>
             <input asp-for="Line" class="form-control" />
             <span asp-validation-for="Line" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="Color" class="control-label"></label>
             <input asp-for="Color" class="form-control" />
             <span asp-validation-for="Color" class="text-danger"></span>
         </div>
-
     </div>
     <div class="col-md-6">
         <div class="form-group">
@@ -39,23 +34,24 @@
             <input asp-for="Price" class="form-control" />
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="Plaque" class="control-label"></label>
             <input asp-for="Plaque" class="form-control" />
             <span asp-validation-for="Plaque" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="Description" class="control-label"></label>
             <input asp-for="Description" class="form-control" />
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-
         <div class="form-group">
             <label asp-for="ImageFile" class="control-label"></label>
             <input asp-for="ImageFile" class="form-control" type="file" />
             <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+        <div class="form-check">
+            <input asp-for="IsRent" type="checkbox" class="form-check-input" />
+            <label asp-for="IsRent" class="form-check-label"></label>
         </div>
     </div>
 </div>
