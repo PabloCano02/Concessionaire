@@ -34,10 +34,64 @@ namespace Concessionaire.Data
         {
             if (!_context.Vehicles.Any())
             {
-                await AddVehicleAsync("ASD123", "Aveo", 2022, "Negro", "Confortable para la familia", 180000M, true, new List<string>() { "Aveo.jpg" }, "Chevrolet", "Carro");
-                //await AddVehicleAsync("LKJ987", "Captiva", 2022, "Blanco", "El mejor vehículo para viajar", 300000M, false, new List<string>() { "ChevroletCaptiva.png" });
-                //await AddVehicleAsync("TJH567", "CX30", 2022, "Gris", "El mejor vehículo para disfrutar de la ciudad", 200000M, false, new List<string>() { "MazdaCX30.png" });
-                //await AddVehicleAsync("HOX67D", "NKD 125", 2022, "Negro", "Ideal para ir al trabajo", 80000M, true, new List<string>() { "AKTNKD125.png" });
+                await AddVehicleAsync("HOX67D", "CR4 125", 2020, "Negro", "Ideal para ir al trabajo", 80000M, true, new List<string>() { "AKTCR4125(1).png", "AKTCR4125(2).png", "AKTCR4125(3).png" }, "AKT", "Moto");
+                await AddVehicleAsync("POF95G", "Dynamic 125", 2022, "Negro", "Ideal para recorrer la ciudad", 50000M, true, new List<string>() { "AKTDynamic.png" }, "AKT", "Moto");
+                await AddVehicleAsync("GHP78D", "Jet 110", 2022, "Negro", "Ideal para recorrer la ciudad", 50000M, true, new List<string>() { "AKTJet.png" }, "AKT", "Moto");
+                await AddVehicleAsync("ERP45D", "NKD 125", 2022, "Negro", "Ideal para realizar el trabajo", 60000M, true, new List<string>() { "AKTNKD125.png" }, "AKT", "Moto");
+                await AddVehicleAsync("BNK43D", "Special 110", 2021, "Morado", "Ideal para desplazarte hacia el trabajo", 60000M, true, new List<string>() { "AKTSpecial.png" }, "AKT", "Moto");
+                await AddVehicleAsync("TRP63D", "TTR 200", 2022, "Negro", "Ideal para alejarte de la ciudad en la que vives y dirigirte a otras ciudades", 100000M, true, new List<string>() { "AKTTTR200.png" }, "AKT", "Moto");
+                await AddVehicleAsync("QWE098", "A4", 2018, "Negro", "Confortable para la familia", 200000M, true, new List<string>() { "AudiA4.png" }, "Audi", "Carro");
+                await AddVehicleAsync("HGO764", "Q5", 2019, "Negro", "El vehículo se inspiró en la felicidad familiar", 300000M, true, new List<string>() { "AudiQ5.png" }, "Audi", "Carro");
+                await AddVehicleAsync("BNV567", "S8", 2020, "Azul", "El vehículo perfecto para competir", 500000M, true, new List<string>() { "AudiS8.png" }, "Audi", "Carro");
+                await AddVehicleAsync("POH026", "TT", 2021, "Azul", "El vehículo perfecto para competir", 500000M, true, new List<string>() { "AudiTT.png" }, "Audi", "Carro");
+                await AddVehicleAsync("KJH45F", "F 900", 2021, "Rojo", "Ideal para ir a visitar otras ciudades", 350000M, true, new List<string>() { "BMWF900.png" }, "BMW", "Moto");
+                await AddVehicleAsync("KLA45B", "K 1600", 2014, "Rojo", "Ideal para ir a visitar otras ciudades", 150000M, true, new List<string>() { "BMWK1600.png" }, "BMW", "Moto");
+                await AddVehicleAsync("IGJ23A", "R 1200", 2021, "Negro", "Ideal para recorrer muchos kilometros de carretera", 380000M, true, new List<string>() { "BMWR1200.png" }, "BMW", "Moto");
+                await AddVehicleAsync("KSM456", "Serie 7", 2021, "Gris", "El vehículo perfecto para competir", 300000M, true, new List<string>() { "BMWSerie7.png" }, "BMW", "Carro");
+                await AddVehicleAsync("FSD845", "X3", 2021, "Azul", "Este vehículo se diseñó para disfrutar de tus viajes", 600000M, true, new List<string>() { "BMWX3.png" }, "BMW", "Carro");
+                await AddVehicleAsync("JKL123", "Z4", 2022, "Rojo", "Este vehículo es ideal para viajar con tu pareja", 500000M, true, new List<string>() { "BMWZ4.png" }, "BMW", "Carro");
+                await AddVehicleAsync("ASD123", "Aveo", 2022, "Negro", "Confortable para la familia", 180000M, true, new List<string>() { "ChevroletAveo.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("MNB456", "Camaro", 2022, "Negro", "Ideal para competir", 180000M, true, new List<string>() { "ChevroletCamaro.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("JAC013", "Captiva", 2021, "Blanco", "Ideal para transitar en la ciudad", 200000M, true, new List<string>() { "ChevroletCaptiva.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("GFP789", "Cruze", 2022, "Gris", "Ideal para la rutina diaria", 200000M, true, new List<string>() { "ChevroletCruze.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("UYT123", "Orlando", 2022, "Gris", "Ideal para la rutina diaria", 250000M, true, new List<string>() { "ChevroletOrlando.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("CVE999", "Spark", 2022, "Naranjado", "Ideal para la rutina diaria", 350000M, true, new List<string>() { "ChevroletSpark.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("ASP753", "Tracker", 2022, "Rojo", "Ideal para transportarse hasta su propiedad", 450000M, true, new List<string>() { "ChevroletTracker.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("KLP561", "Trax", 2022, "Azul", "Confortable para la familia", 250000M, true, new List<string>() { "ChevroletTrax.png" }, "Chevrolet", "Carro");
+                await AddVehicleAsync("CHA452", "Fiesta", 2020, "Negro", "Este vehículo se diseñó para disfrutar de tus viajes", 150000M, true, new List<string>() { "FordFiesta.png" }, "Ford", "Carro");
+                await AddVehicleAsync("ZXC725", "Focus", 2021, "Blanco", "Ideal para la rutina diaria", 200000M, true, new List<string>() { "FordFocus.png" }, "Ford", "Carro");
+                await AddVehicleAsync("KFJ785", "Mustang", 2022, "Rojo", "El vehículo perfecto para competir", 900000M, true, new List<string>() { "FordMustang.png" }, "Ford", "Carro");
+                await AddVehicleAsync("GFS457", "Mazda 2", 2022, "Rojo", "Confortable para la familia", 100000M, true, new List<string>() { "Mazda2(1).png", "Mazda2(2).png", "Mazda2(3).png" }, "Mazda", "Carro");
+                await AddVehicleAsync("ASB546", "Mazda 3", 2021, "Blanco", "Ideal para transportarse hasta su propiedad", 150000M, true, new List<string>() { "Mazda3.png" }, "Mazda", "Carro");
+                await AddVehicleAsync("BID784", "Mazda 6", 2021, "Blanco", "Ideal para la rutina diaria", 250000M, true, new List<string>() { "Mazda6.png" }, "Mazda", "Carro");
+                await AddVehicleAsync("LAS666", "Mazda CX3", 2021, "Rojo", "Este vehículo se diseñó para disfrutar de tus viajes", 300000M, true, new List<string>() { "MazdaCX3.png" }, "Mazda", "Carro");
+                await AddVehicleAsync("TAS266", "Mazda CX30", 2022, "Gris", "Confortable para la familia", 300000M, true, new List<string>() { "MazdaCX30.png" }, "Mazda", "Carro");
+                await AddVehicleAsync("GFS456", "Mazda CX5", 2022, "Blanco", "Confortable para la familia", 400000M, true, new List<string>() { "MazdaCX5(1).png", "MazdaCX5(2).png" }, "Mazda", "Carro");
+                await AddVehicleAsync("KLP421", "Mazda CX9", 2022, "Gris", "Ideal para transportarse hasta su propiedad", 350000M, true, new List<string>() { "MazdaCX9(1).png", "MazdaCX9(2).png" }, "Mazda", "Carro");
+                await AddVehicleAsync("DFG839", "Mazda MX5", 2021, "Negro", "Ideal para transportarse hasta su propiedad", 350000M, true, new List<string>() { "MazdaMX5.png" }, "Mazda", "Carro");
+                await AddVehicleAsync("ASU123", "Clase CLA", 2022, "Rojo", "Confortable para la familia", 350000M, true, new List<string>() { "MercedesClaseCLA.png" }, "Mercedes Benz", "Carro");
+                await AddVehicleAsync("IUY456", "Clase G", 2022, "Gris", "Confortable para la familia", 250000M, true, new List<string>() { "MercedesClaseG.png" }, "Mercedes Benz", "Carro");
+                await AddVehicleAsync("YUC159", "Clase GLE", 2022, "Rojo", "Confortable para la familia", 450000M, true, new List<string>() { "MercedesClaseGLE.png" }, "Mercedes Benz", "Carro");
+                await AddVehicleAsync("UDJ123", "Captur", 2020, "Blanco", "Ideal para transitar en la ciudad", 100000M, true, new List<string>() { "RenaultCaptur.png" }, "Renault", "Carro");
+                await AddVehicleAsync("OIU903", "Koleos", 2021, "Negro", "Confortable para la familia", 150000M, true, new List<string>() { "RenaultKoleos.png" }, "Renault", "Carro");
+                await AddVehicleAsync("HGN829", "Logan", 2022, "Blanco", "Ideal para transitar en la ciudad", 120000M, true, new List<string>() { "RenaultLogan.png" }, "Renault", "Carro");
+                await AddVehicleAsync("POE666", "Megane", 2021, "Café", "Ideal para transitar en la ciudad", 100000M, true, new List<string>() { "RenaultMegane.png" }, "Renault", "Carro");
+                await AddVehicleAsync("PJF934", "Sandero", 2020, "Rojo", "Este vehículo es ideal para viajar con tu pareja", 190000M, true, new List<string>() { "RenaultSandero.png" }, "Renault", "Carro");
+                await AddVehicleAsync("LKJ838", "Twingo", 2022, "Naranjado", "Ideal para transitar en la ciudad", 150000M, true, new List<string>() { "RenaultTwingo.png" }, "Renault", "Carro");
+                await AddVehicleAsync("JIP93F", "Address", 2021, "Blanco", "Ideal para trabajar en la ciudad", 45000M, true, new List<string>() { "SuzukiAddress.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("UHA45F", "DR 150", 2021, "Negro", "Ideal para trabajar en la ciudad", 35000M, true, new List<string>() { "SuzukiDR.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("CVR75F", "Gixxer", 2021, "Gris", "Ideal para realizar el trabajo", 45000M, true, new List<string>() { "SuzukiGixxer.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("UDG75F", "GSX-R", 2022, "Azul", "Ideal para transitar en la ciudad", 60000M, true, new List<string>() { "SuzukiGSX-R.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("UFN754", "Ignis", 2021, "Blanco", "Ideal para trabajar en la ciudad", 450000M, true, new List<string>() { "SuzukiIgnis.png" }, "Suzuki", "Carro");
+                await AddVehicleAsync("JIP83F", "New Best", 2021, "Negro", "Ideal para transitar en la ciudad", 45000M, true, new List<string>() { "SuzukiNewBest.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("DEW654", "Swift", 2022, "Amarillo", "El mejor vehículo para transportarse entre departamentos / estados", 190000M, true, new List<string>() { "SuzukiSwift.png" }, "Suzuki", "Carro");
+                await AddVehicleAsync("ASO129", "Vitara", 2022, "Rojo", "Este vehículo es ideal para viajar con tu pareja", 450000M, true, new List<string>() { "SuzukiVitara.png" }, "Suzuki", "Carro");
+                await AddVehicleAsync("GHJ56D", "V Strom 650", 2022, "Amarillo / Negro", "Ideal para trabajar en la ciudad", 85000M, true, new List<string>() { "SuzukiVStrom.png" }, "Suzuki", "Moto");
+                await AddVehicleAsync("GFW95F", "Apache 200", 2022, "Negro", "Ideal para transitar en la ciudad", 105000M, true, new List<string>() { "TVSApache.png" }, "TVS", "Moto");
+                await AddVehicleAsync("BJS12F", "NTorq", 2022, "Gris", "Ideal para trabajar en la ciudad", 95000M, true, new List<string>() { "TVSNTorq.png" }, "TVS", "Moto");
+                await AddVehicleAsync("JFS45F", "Raider", 2022, "Morado / Negro", "Ideal para trabajar en la ciudad", 85000M, true, new List<string>() { "TVSRaider.png" }, "TVS", "Moto");
+                await AddVehicleAsync("ASD95F", "Sport", 2022, "Negro", "Este vehículo es ideal para viajar con tu pareja", 85000M, true, new List<string>() { "TVSSport.png" }, "TVS", "Moto");
+                await AddVehicleAsync("JGK53F", "Stryker", 2022, "Azul", "Confortable para la familia", 98000M, true, new List<string>() { "TVSStryker.png" }, "TVS", "Moto");
                 await _context.SaveChangesAsync();
             }
         }
@@ -306,7 +360,6 @@ namespace Concessionaire.Data
             {
                 _context.VehicleTypes.Add(new VehicleType { Name = "Carro" });
                 _context.VehicleTypes.Add(new VehicleType { Name = "Moto" });
-                _context.VehicleTypes.Add(new VehicleType { Name = "Camión" });
                 await _context.SaveChangesAsync();
             }
         }
@@ -321,7 +374,6 @@ namespace Concessionaire.Data
                 _context.Brands.Add(new Brand { Name = "Suzuki" });
                 _context.Brands.Add(new Brand { Name = "AKT" });
                 _context.Brands.Add(new Brand { Name = "TVS" });
-                _context.Brands.Add(new Brand { Name = "Foton" });
                 _context.Brands.Add(new Brand { Name = "Ford" });
                 _context.Brands.Add(new Brand { Name = "Audi" });
                 _context.Brands.Add(new Brand { Name = "BMW" });
