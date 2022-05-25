@@ -75,7 +75,9 @@
                                     @Html.DisplayFor(modelItem => item.Price)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.IsRent)
+                                    <div style="margin-left: 35px">
+                                        @Html.DisplayFor(modelItem => item.IsRent)
+                                    </div>
                                 </td>
                                 <td>
                                     <img src="@item.ImageFullPath" style="width:100px;" />
