@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Concessionaire.Models.VehiclesHomeViewModel>
+﻿@model Concessionaire.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -6,7 +6,12 @@
 
 <flash dismissable="true" />
 
-@foreach (var item in Model)
+@if(Model.Quantity > 0)
+{
+    <a asp-action="ShowCart" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
+}
+
+@foreach (var item in Model.Vehicles)
 {
     <div class="row">
         @if (item.Vehicle1 != null)

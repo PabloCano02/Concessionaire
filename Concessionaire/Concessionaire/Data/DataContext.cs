@@ -19,6 +19,8 @@ namespace Concessionaire.Data
 
         public DbSet<State> States { get; set; }
 
+        public DbSet<TemporalReserve> TemporalReserves { get; set; }
+
         public DbSet<Vehicle> Vehicles { get; set; }
 
         public DbSet<VehiclePhoto> VehiclePhotos { get; set; }
