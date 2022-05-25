@@ -33,32 +33,7 @@ namespace Concessionaire.Controllers
                 .OrderBy(v => v.Brand.Name)
                 .ToListAsync();
 
-            List<VehiclesHomeViewModel> vehiclesHome = new() { new VehiclesHomeViewModel() };
-            int i = 1;
-            foreach (Vehicle? product in vehicles)
-            {
-                if (i == 1)
-                {
-                    vehiclesHome.LastOrDefault().Vehicle1 = product;
-                }
-                if (i == 2)
-                {
-                    vehiclesHome.LastOrDefault().Vehicle2 = product;
-                }
-                if (i == 3)
-                {
-                    vehiclesHome.LastOrDefault().Vehicle3 = product;
-                }
-                if (i == 4)
-                {
-                    vehiclesHome.LastOrDefault().Vehicle4 = product;
-                    vehiclesHome.Add(new VehiclesHomeViewModel());
-                    i = 0;
-                }
-                i++;
-            }
-
-            HomeViewModel homeModel = new() { Vehicles = vehiclesHome };
+            HomeViewModel homeModel = new() { Vehicles = vehicles };
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
             {
@@ -66,7 +41,6 @@ namespace Concessionaire.Controllers
                     .Where(ts => ts.User.Id == user.Id)
                     .SumAsync(ts => ts.Quantity);
             }
-
 
             return View(homeModel);
         }

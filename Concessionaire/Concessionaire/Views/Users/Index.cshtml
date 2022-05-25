@@ -49,11 +49,10 @@
                                 Tipo
                             </th>
                             <th>
-                                Habilitado
-                            </th>
-
-                            <th>
                                 @Html.DisplayNameFor(model => model.ImageFullPath)
+                            </th>
+                            <th>
+                                Habilitado
                             </th>
                         </tr>
                     </thead>
@@ -89,11 +88,12 @@
                                     @Html.DisplayFor(modelItem => item.UserType)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.EmailConfirmed)
+                                    <div class="zoom">
+                                        <img src="@item.ImageFullPath" style="width:80px; height:80px; border-radius:40px" />
+                                    </div>
                                 </td>
-
                                 <td>
-                                    <img src="@item.ImageFullPath" style="width:80px; height:80px; border-radius:40px" />
+                                    @Html.DisplayFor(modelItem => item.EmailConfirmed)
                                 </td>
                             </tr>
                         }
