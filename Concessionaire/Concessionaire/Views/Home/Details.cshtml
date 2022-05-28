@@ -1,4 +1,4 @@
-﻿@*@model Concessionaire.Models.AddVehicleToCartViewModel
+﻿@model Concessionaire.Models.AddVehicleToCartViewModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -37,7 +37,7 @@
     <div class="col-md-6">
         <dl class="row">
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.VehicleType)
+                Tipo de vehículo
             </dt>
             <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.VehicleType)
@@ -96,6 +96,16 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id"/>
                     <div class="form-group">
+                        <label asp-for="InitialDate" class="control-label"></label>
+                        <input asp-for="InitialDate" Type="date" class="form-control" />
+                        <span asp-validation-for="InitialDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FinalDate" class="control-label"></label>
+                        <input asp-for="FinalDate" Type="date" class="form-control" />
+                        <span asp-validation-for="FinalDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="Remarks" class="control-label"></label>
                         <input asp-for="Remarks" class="form-control" />
                         <span asp-validation-for="Remarks" class="text-danger"></span>
@@ -127,4 +137,3 @@
 </script>
 }
 
-*@

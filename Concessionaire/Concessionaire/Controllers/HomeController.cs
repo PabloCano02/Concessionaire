@@ -69,7 +69,7 @@ namespace Concessionaire.Controllers
                 .Include(v => v.VehicleType)
                 .Include(v => v.Brand)
                 .Include(v => v.VehiclePhotos)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
             
             if (vehicle == null)
             {
@@ -134,6 +134,7 @@ namespace Concessionaire.Controllers
 
                     _context.TemporalReserves.Add(temporalSale);
                     await _context.SaveChangesAsync();
+                    _flashMessage.Danger("Se adicionó exitosamente el vehículo al carro de compras.");
                     return RedirectToAction(nameof(Index), new { Id = addModel.VehicleId });
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -153,6 +154,82 @@ namespace Concessionaire.Controllers
                 }
             }
             return View(addModel);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Vehicle vehicle = await _context.Vehicles
+                .Include(v => v.VehiclePhotos)
+                .Include(v => v.VehicleType)
+                .Include(v => v.Brand)
+                .FirstOrDefaultAsync(v => v.Id == id);
+            
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            AddVehicleToCartViewModel detailsModel = new()
+            {
+                VehicleId = vehicle.Id,
+                VehicleType = vehicle.VehicleType.Name,
+                Brand = vehicle.Brand.Name,
+                Line = vehicle.Line,
+                Model = vehicle.Model,
+                Plaque = vehicle.Plaque,
+                Color = vehicle.Color,
+                Description = vehicle.Description,
+                Price = vehicle.Price,
+                IsRent = vehicle.IsRent,
+                VehiclePhotos = vehicle.VehiclePhotos,
+                Quantity = 1,
+                InitialDate = DateTime.Now,
+                FinalDate = DateTime.Now,
+            };
+
+            return View(detailsModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(AddVehicleToCartViewModel detailsModel)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                _flashMessage.Info("Señor(a) usuario(a) para adicionar vehículos al carrito de compras, primero debe ingresar sus credenciales. En caso de olvidarlas, dar clic en la opción ¿Has olvidado tu contraseña; de lo contrario es necesario que se registre en nuestra base de datos dando clic en la opción Registrar Nuevo Usuario.");
+                return RedirectToAction("Login", "Account");
+            }
+
+            Vehicle vehicle = await _context.Vehicles.FindAsync(detailsModel.Id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            TemporalReserve temporalReserve = new()
+            {
+                Vehicle = vehicle,
+                InitialDate = detailsModel.InitialDate,
+                FinalDate = detailsModel.FinalDate,
+                Remarks = detailsModel.Remarks,
+                User = user
+            };
+
+            _context.TemporalReserves.Add(temporalReserve);
+            await _context.SaveChangesAsync();
+            _flashMessage.Confirmation("Se adicionó exitosamente el vehículo al carro de compras.");
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize]
