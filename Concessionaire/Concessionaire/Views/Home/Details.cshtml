@@ -95,6 +95,7 @@
                 <form asp-action="Details">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id"/>
+                    <input type="hidden" asp-for="Quantity"/>
                     <div class="form-group">
                         <label asp-for="InitialDate" class="control-label"></label>
                         <input asp-for="InitialDate" Type="date" class="form-control" />

@@ -31,6 +31,7 @@ namespace Concessionaire.Controllers
                 .Include(v => v.VehicleType)
                 .Include(v => v.Brand)
                 .Include(v => v.VehiclePhotos)
+                .Include(v => v.TemporalReserves)
                 .OrderBy(v => v.Brand.Name)
                 .ToListAsync();
 
@@ -39,8 +40,8 @@ namespace Concessionaire.Controllers
             if (user != null)
             {
                 homeModel.Quantity = await _context.TemporalReserves
-                    .Where(ts => ts.User.Id == user.Id)
-                    .SumAsync(ts => ts.Quantity);
+                    .Where(tr => tr.User.Id == user.Id)
+                    .SumAsync(tr => tr.Quantity);
             }
 
             return View(homeModel);
@@ -55,7 +56,7 @@ namespace Concessionaire.Controllers
 
             if (!User.Identity.IsAuthenticated)
             {
-                _flashMessage.Info("Señor(a) usuario(a) para adicionar vehículos al carrito de compras, primero debe ingresar sus credenciales. En caso de olvidarlas, dar clic en la opción ¿Has olvidado tu contraseña; de lo contrario es necesario que se registre en nuestra base de datos dando clic en la opción Registrar Nuevo Usuario.");
+                _flashMessage.Info("Señor(a) usuario(a) para adicionar vehículos al carrito de compras, primero debe ingresar sus credenciales. En caso de olvidarlas, dar clic en la opción ¿Has olvidado tu contraseña?; de lo contrario es necesario que se registre en nuestra base de datos dando clic en la opción Registrar Nuevo Usuario.");
                 return RedirectToAction("Login", "Account");
             }
 
@@ -201,7 +202,7 @@ namespace Concessionaire.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                _flashMessage.Info("Señor(a) usuario(a) para adicionar vehículos al carrito de compras, primero debe ingresar sus credenciales. En caso de olvidarlas, dar clic en la opción ¿Has olvidado tu contraseña; de lo contrario es necesario que se registre en nuestra base de datos dando clic en la opción Registrar Nuevo Usuario.");
+                _flashMessage.Info("Señor(a) usuario(a) para adicionar vehículos al carrito de compras, primero debe ingresar sus credenciales. En caso de olvidarlas, dar clic en la opción ¿Has olvidado tu contraseña?; de lo contrario es necesario que se registre en nuestra base de datos dando clic en la opción Registrar Nuevo Usuario.");
                 return RedirectToAction("Login", "Account");
             }
 
@@ -217,9 +218,17 @@ namespace Concessionaire.Controllers
                 return NotFound();
             }
 
+            if (user != null)
+            {
+                detailsModel.Quantity = await _context.TemporalReserves
+                    .Where(tr => tr.User.Id == user.Id)
+                    .SumAsync(tr => tr.Quantity);
+            }
+
             TemporalReserve temporalReserve = new()
             {
                 Vehicle = vehicle,
+                Quantity = detailsModel.Quantity,
                 InitialDate = detailsModel.InitialDate,
                 FinalDate = detailsModel.FinalDate,
                 Remarks = detailsModel.Remarks,
@@ -259,6 +268,83 @@ namespace Concessionaire.Controllers
 
             return View(cartModel);
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalReserve temporalReserve = await _context.TemporalReserves.FindAsync(id);
+            if (temporalReserve == null)
+            {
+                return NotFound();
+            }
+
+            _context.TemporalReserves.Remove(temporalReserve);
+            await _context.SaveChangesAsync();
+            _flashMessage.Info("Se borró exitosamente el vehículo del carro de compras.");
+            return RedirectToAction(nameof(ShowCart));
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalReserve temporalReserve = await _context.TemporalReserves.FindAsync(id);
+            if (temporalReserve == null)
+            {
+                return NotFound();
+            }
+
+            EditTemporalReserveViewModel model = new()
+            {
+                Id = temporalReserve.Id,
+                InitialDate = temporalReserve.InitialDate,
+                FinalDate = temporalReserve.FinalDate,
+                Remarks = temporalReserve.Remarks,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, EditTemporalReserveViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TemporalReserve temporalReserve = await _context.TemporalReserves.FindAsync(id);
+                    temporalReserve.InitialDate = model.InitialDate;
+                    temporalReserve.FinalDate = model.FinalDate;
+                    temporalReserve.Remarks = model.Remarks;
+                    _context.Update(temporalReserve);
+                    await _context.SaveChangesAsync();
+                    _flashMessage.Info("Los datos de la reserva se han modificado con éxito.");
+                }
+                catch (Exception exception)
+                {
+                    _flashMessage.Danger(exception.Message);
+                    return View(model);
+                }
+
+                return RedirectToAction(nameof(ShowCart));
+            }
+
+            return View(model);
+        }
+
 
         public IActionResult Privacy()
         {
