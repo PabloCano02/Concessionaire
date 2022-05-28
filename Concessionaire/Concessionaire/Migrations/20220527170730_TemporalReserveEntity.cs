@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Concessionaire.Migrations
 {
-    public partial class AddTemporalReserveEntity : Migration
+    public partial class TemporalReserveEntity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,8 +17,10 @@ namespace Concessionaire.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     VehicleId = table.Column<int>(type: "int", nullable: true),
-                    Quantity = table.Column<float>(type: "real", nullable: false),
-                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    InitialDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FinalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Quantity = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {

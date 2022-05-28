@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concessionaire.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220525141826_AddTemporalReserveEntity")]
-    partial class AddTemporalReserveEntity
+    [Migration("20220527170730_TemporalReserveEntity")]
+    partial class TemporalReserveEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -127,6 +127,12 @@ namespace Concessionaire.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("FinalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("InitialDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<float>("Quantity")
                         .HasColumnType("real");
@@ -499,7 +505,7 @@ namespace Concessionaire.Migrations
                         .HasForeignKey("UserId");
 
                     b.HasOne("Concessionaire.Data.Entities.Vehicle", "Vehicle")
-                        .WithMany()
+                        .WithMany("TemporalReserves")
                         .HasForeignKey("VehicleId");
 
                     b.Navigation("User");
@@ -619,6 +625,8 @@ namespace Concessionaire.Migrations
 
             modelBuilder.Entity("Concessionaire.Data.Entities.Vehicle", b =>
                 {
+                    b.Navigation("TemporalReserves");
+
                     b.Navigation("VehiclePhotos");
                 });
 

@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Concessionaire.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
-namespace Concessionaire.Data.Entities
+namespace Concessionaire.Models
 {
-    public class Vehicle
+    public class AddVehicleToCartViewModel
     {
         public int Id { get; set; }
 
+        public int VehicleId { get; set; }
+
         [Display(Name = "Placa")]
         [RegularExpression(@"[a-zA-Z]{3}[0-9]{2}[a-zA-Z0-9]", ErrorMessage = "Formato de placa no válido")]
-        [StringLength(6, MinimumLength = 6 , ErrorMessage = "El campo {0} debe tener {1} caractéres.")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "El campo {0} debe tener {1} caractéres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Plaque { get; set; }
 
@@ -28,12 +30,11 @@ namespace Concessionaire.Data.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Color { get; set; }
 
-        [DataType(DataType.MultilineText)]
         [Display(Name = "Descripción")]
         [MaxLength(500, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Description { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
         [DisplayFormat(DataFormatString = "{0:C2}")]
         [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
@@ -43,26 +44,30 @@ namespace Concessionaire.Data.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public bool IsRent { get; set; }
 
-        [Display(Name = "Tipo de vehículo")]
+        [Display(Name = "Fecha inicial")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public VehicleType VehicleType { get; set; }
+        public DateTime InitialDate { get; set; }
+
+        [Display(Name = "Fecha final")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public DateTime FinalDate { get; set; }
 
         [Display(Name = "Marca")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Brand Brand { get; set; }
+        public string Brand { get; set; }
 
-        public ICollection<TemporalReserve> TemporalReserves { get; set; }
+        [Display(Name = "Marca")]
+        public string VehicleType { get; set; }
 
         public ICollection<VehiclePhoto> VehiclePhotos { get; set; }
 
-        [Display(Name = "Fotos")]
-        public int PhotosNumber => VehiclePhotos == null ? 0 : VehiclePhotos.Count;
+        [Display(Name = "Cantidad")]
+        [Range(0.0000001, float.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la cantidad.")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public float Quantity { get; set; }
 
-        //TODO: Pending to change to the correct path
-        [Display(Name = "Foto")]
-        public string ImageFullPath => VehiclePhotos == null || VehiclePhotos.Count == 0
-            ? $"https://localhost:7170/images/noimage.png"
-            : VehiclePhotos.FirstOrDefault().ImageFullPath;
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Comentarios")]
+        public string Remarks { get; set; }
 
     }
 }
