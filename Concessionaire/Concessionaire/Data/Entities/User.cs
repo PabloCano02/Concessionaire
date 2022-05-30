@@ -41,6 +41,8 @@ namespace Concessionaire.Data.Entities
         [Display(Name = "Tipo de usuario")]
         public UserType UserType { get; set; }
 
+        public ICollection<Reserve> Reserves { get; set; }
+
         [Display(Name = "Usuario")]
         public string FullName => $"{FirstName} {LastName}";
 

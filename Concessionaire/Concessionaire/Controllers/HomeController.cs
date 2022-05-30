@@ -1,4 +1,5 @@
-﻿using Concessionaire.Data;
+﻿using Concessionaire.Common;
+using Concessionaire.Data;
 using Concessionaire.Data.Entities;
 using Concessionaire.Helpers;
 using Concessionaire.Models;
@@ -16,13 +17,15 @@ namespace Concessionaire.Controllers
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IFlashMessage _flashMessage;
+        private readonly IOrderHelper _orderHelper;
 
-        public HomeController(ILogger<HomeController> logger, DataContext context, IUserHelper userHelper, IFlashMessage flashMessage)
+        public HomeController(ILogger<HomeController> logger, DataContext context, IUserHelper userHelper, IFlashMessage flashMessage, IOrderHelper orderHelper)
         {
             _logger = logger;
             _context = context;
             _userHelper = userHelper;
             _flashMessage = flashMessage;
+            _orderHelper = orderHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -32,6 +35,7 @@ namespace Concessionaire.Controllers
                 .Include(v => v.Brand)
                 .Include(v => v.VehiclePhotos)
                 .Include(v => v.TemporalReserves)
+                .Where(v => v.IsRent == true)
                 .OrderBy(v => v.Brand.Name)
                 .ToListAsync();
 
@@ -135,7 +139,7 @@ namespace Concessionaire.Controllers
 
                     _context.TemporalReserves.Add(temporalSale);
                     await _context.SaveChangesAsync();
-                    _flashMessage.Danger("Se adicionó exitosamente el vehículo al carro de compras.");
+                    _flashMessage.Confirmation("Se adicionó exitosamente el vehículo al carro de compras.");
                     return RedirectToAction(nameof(Index), new { Id = addModel.VehicleId });
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -269,6 +273,34 @@ namespace Concessionaire.Controllers
             return View(cartModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ShowCart(ShowCartViewModel model)
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            model.User = user;
+            model.TemporalReserves = await _context.TemporalReserves
+                .Include(tr => tr.Vehicle)
+                .ThenInclude(v => v.VehiclePhotos)
+                .Where(tr => tr.User.Id == user.Id)
+                .ToListAsync();
+            //error
+            Response response = await _orderHelper.ProcessOrderAsync(model);
+            if (response.IsSuccess)
+            {
+                return RedirectToAction(nameof(OrderSuccess));
+            }
+
+            ModelState.AddModelError(string.Empty, response.Message);
+            return View(model);
+        }
+
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -345,6 +377,11 @@ namespace Concessionaire.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public IActionResult OrderSuccess()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

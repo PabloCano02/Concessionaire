@@ -17,6 +17,10 @@ namespace Concessionaire.Data
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<Reserve> Reserves { get; set; }
+
+        public DbSet<ReserveDetail> ReserveDetails { get; set; }
+
         public DbSet<State> States { get; set; }
 
         public DbSet<TemporalReserve> TemporalReserves { get; set; }
@@ -26,7 +30,6 @@ namespace Concessionaire.Data
         public DbSet<VehiclePhoto> VehiclePhotos { get; set; }
 
         public DbSet<VehicleType> VehicleTypes { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -55,6 +55,8 @@ namespace Concessionaire.Data.Entities
 
         public ICollection<VehiclePhoto> VehiclePhotos { get; set; }
 
+        public ICollection<ReserveDetail> ReserveDetails { get; set; }
+
         [Display(Name = "Fotos")]
         public int PhotosNumber => VehiclePhotos == null ? 0 : VehiclePhotos.Count;
 
