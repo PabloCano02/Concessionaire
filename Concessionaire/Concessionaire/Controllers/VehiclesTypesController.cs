@@ -1,9 +1,11 @@
 ﻿using Concessionaire.Data;
 using Concessionaire.Data.Entities;
+using Concessionaire.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vereyon.Web;
+using static Concessionaire.Helpers.ModalHelper;
 
 namespace Concessionaire.Controllers
 {
@@ -22,28 +24,50 @@ namespace Concessionaire.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.VehicleTypes.ToListAsync());
+            return View(await _context.VehicleTypes
+                .Include(vt => vt.Vehicles)
+                .ToListAsync());
         }
 
-        [HttpGet]
-        public IActionResult Create()
+        [NoDirectAccess]
+        public async Task<IActionResult> AddOrEdit(int id = 0)
         {
-            return View();
+            if (id == 0)
+            {
+                return View(new VehicleType());
+            }
+            else
+            {
+                VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
+                if (vehicleType == null)
+                {
+                    return NotFound();
+                }
+
+                return View(vehicleType);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(VehicleType vehicleType)
+        public async Task<IActionResult> AddOrEdit(int id, VehicleType vehicleType)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Add(vehicleType);
-                    await _context.SaveChangesAsync();
-                    _flashMessage.Confirmation("El tipo de vehículo se ha creado de manera exitosa.");
-                    return RedirectToAction(nameof(Index));
-
+                    if (id == 0)
+                    {
+                        _context.Add(vehicleType);
+                        await _context.SaveChangesAsync();
+                        _flashMessage.Confirmation("Registro creado.");
+                    }
+                    else
+                    {
+                        _context.Update(vehicleType);
+                        await _context.SaveChangesAsync();
+                        _flashMessage.Info("Registro actualizado.");
+                    }
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
@@ -53,103 +77,38 @@ namespace Concessionaire.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                        _flashMessage.Danger(dbUpdateException.InnerException.Message);
                     }
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, exception.Message);
+                    _flashMessage.Danger(exception.Message);
+                    return View(vehicleType);
                 }
+
+                return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "_ViewAllVehicleTypes", _context.VehicleTypes.Include(vt => vt.Vehicles).ToList()) });
             }
-            return View(vehicleType);
+
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", vehicleType) });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
-            if (vehicleType == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicleType);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, VehicleType vehicleType)
-        {
-            if (id != vehicleType.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(vehicleType);
-                    await _context.SaveChangesAsync();
-                    _flashMessage.Confirmation("El tipo de vehículo se ha editado de manera exitosa.");
-                    return RedirectToAction(nameof(Index));
-
-                }
-                catch (DbUpdateException dbUpdateException)
-                {
-                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
-                        _flashMessage.Danger("Ya existe un tipo de vehículo con el mismo nombre.");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty, exception.Message);
-                }
-
-            }
-
-            return View(vehicleType);
-        }
-
-        [HttpGet]
+        [NoDirectAccess]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            VehicleType vehicleType = await _context.VehicleTypes.FirstOrDefaultAsync(vt => vt.Id == id);
+            try
             {
-                return NotFound();
+                _context.VehicleTypes.Remove(vehicleType);
+                await _context.SaveChangesAsync();
+                _flashMessage.Confirmation("Registro borrado.");
+            }
+            catch
+            {
+                _flashMessage.Danger("No se puede borrar la marca porque tiene registros relacionados.");
             }
 
-            VehicleType vehicleType = await _context.VehicleTypes
-                .FirstOrDefaultAsync(c => c.Id == id);
-            if (vehicleType == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicleType);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            VehicleType vehicleType = await _context.VehicleTypes.FindAsync(id);
-            _context.VehicleTypes.Remove(vehicleType);
-            await _context.SaveChangesAsync();
-            _flashMessage.Confirmation("El tipo de vehículo se ha eliminado de manera exitosa.");
             return RedirectToAction(nameof(Index));
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
@@ -168,6 +127,5 @@ namespace Concessionaire.Controllers
 
             return View(vehicleType);
         }
-
     }
 }

@@ -105,7 +105,6 @@ namespace Concessionaire.Controllers
                 }
 
                 return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "_ViewAllBrands", _context.Brands.Include(b => b.Vehicles).ToList()) });
-
             }
 
             return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", brand) });
