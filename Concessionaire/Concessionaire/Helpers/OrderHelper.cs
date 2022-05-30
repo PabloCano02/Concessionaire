@@ -3,6 +3,7 @@ using Concessionaire.Data;
 using Concessionaire.Data.Entities;
 using Concessionaire.Enums;
 using Concessionaire.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Concessionaire.Helpers
 {
@@ -14,6 +15,28 @@ namespace Concessionaire.Helpers
         {
             _context = context;
         }
+
+        public async Task<Response> CancelOrderAsync(int id)
+        {
+            Reserve reserve = await _context.Reserves
+                .Include(r => r.ReserveDetails)
+                .ThenInclude(rd => rd.Vehicle)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            foreach (ReserveDetail reserveDetail in reserve.ReserveDetails)
+            {
+                Vehicle vehicle = await _context.Vehicles.FindAsync(reserveDetail.Vehicle.Id);
+                if (vehicle != null)
+                {
+                    vehicle.IsRent = true;
+                }
+            }
+
+            reserve.OrderStatus = OrderStatus.Cancelado;
+            await _context.SaveChangesAsync();
+            return new Response { IsSuccess = true };
+        }
+
 
         public async Task<Response> ProcessOrderAsync(ShowCartViewModel model)
         {

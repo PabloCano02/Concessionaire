@@ -289,7 +289,6 @@ namespace Concessionaire.Controllers
                 .ThenInclude(v => v.VehiclePhotos)
                 .Where(tr => tr.User.Id == user.Id)
                 .ToListAsync();
-            //error
             Response response = await _orderHelper.ProcessOrderAsync(model);
             if (response.IsSuccess)
             {
