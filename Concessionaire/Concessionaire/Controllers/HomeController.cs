@@ -28,18 +28,67 @@ namespace Concessionaire.Controllers
             _orderHelper = orderHelper;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            List<Vehicle> vehicles = await _context.Vehicles
-                .Include(v => v.VehicleType)
-                .Include(v => v.Brand)
-                .Include(v => v.VehiclePhotos)
-                .Include(v => v.TemporalReserves)
-                .Where(v => v.IsRent == true)
-                .OrderBy(v => v.Brand.Name)
-                .ToListAsync();
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["BrandSortParm"] = String.IsNullOrEmpty(sortOrder) ? "BrandDesc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "PriceDesc" : "Price";
 
-            HomeViewModel homeModel = new() { Vehicles = vehicles };
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            IQueryable<Vehicle> query = _context.Vehicles
+                .Include(v => v.VehiclePhotos)
+                .Include(v => v.Brand)
+                .Include(v => v.VehicleType)
+                .Where(v => v.IsRent == true);
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(v => (v.Brand.Name.ToLower().Contains(searchString.ToLower()) ||
+                                          v.VehicleType.Name.ToLower().Contains(searchString.ToLower())) &&
+                                          v.IsRent == true);
+            }
+            else
+            {
+                query = query.Where(v => v.IsRent == true);
+            }
+
+
+            switch (sortOrder)
+            {
+                case "BrandDesc":
+                    query = query.OrderByDescending(v => v.Brand.Name);
+                    break;
+                case "Price":
+                    query = query.OrderBy(v => v.Price);
+                    break;
+                case "PriceDesc":
+                    query = query.OrderByDescending(v => v.Price);
+                    break;
+                default:
+                    query = query.OrderBy(v => v.Brand.Name);
+                    break;
+            }
+
+            int pageSize = 8;
+
+            HomeViewModel homeModel = new()
+            {
+                Vehicles = await PaginatedList<Vehicle>.CreateAsync(query, pageNumber ?? 1, pageSize),
+                Brands = await _context.Brands.ToListAsync(),
+            };
+
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
             {
