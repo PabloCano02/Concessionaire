@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vereyon.Web;
+using static Concessionaire.Helpers.ModalHelper;
 
 namespace Concessionaire.Controllers
 {
@@ -34,6 +35,7 @@ namespace Concessionaire.Controllers
                 .ToListAsync());
         }
 
+        [NoDirectAccess]
         public async Task<IActionResult> Create()
         {
             CreateVehicleViewModel model = new()
@@ -83,8 +85,16 @@ namespace Concessionaire.Controllers
                 {
                     _context.Add(vehicle);
                     await _context.SaveChangesAsync();
-                    _flashMessage.Confirmation("Vehículo adicionado con éxito.");
-                    return RedirectToAction(nameof(Index));
+                    _flashMessage.Confirmation("Registro creado.");
+                    return Json(new
+                    {
+                        isValid = true,
+                        html = ModalHelper.RenderRazorViewToString(this, "_ViewAllVehicles", _context.Vehicles
+                        .Include(v => v.VehiclePhotos)
+                        .Include(v => v.Brand)
+                        .Include(v => v.VehicleType)
+                        .ToList())
+                    });
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
@@ -105,16 +115,12 @@ namespace Concessionaire.Controllers
 
             vehicleModel.Brands = await _combosHelper.GetComboBrandsAsync();
             vehicleModel.VehicleTypes = await _combosHelper.GetComboVehicleTypesAsync();
-            return View(vehicleModel);
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "Create", vehicleModel) });
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        [NoDirectAccess]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             Vehicle vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null)
             {
@@ -158,8 +164,16 @@ namespace Concessionaire.Controllers
 
                 _context.Update(vehicle);
                 await _context.SaveChangesAsync();
-                _flashMessage.Confirmation("Vehículo editado con éxito.");
-                return RedirectToAction(nameof(Index));
+                _flashMessage.Confirmation("Registro actualizado.");
+                return Json(new
+                {
+                    isValid = true,
+                    html = ModalHelper.RenderRazorViewToString(this, "_ViewAllVehicles", _context.Vehicles
+                    .Include(v => v.VehiclePhotos)
+                    .Include(v => v.Brand)
+                    .Include(v => v.VehicleType)
+                    .ToList())
+                });
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -177,7 +191,7 @@ namespace Concessionaire.Controllers
                 _flashMessage.Danger(exception.Message);
             }
 
-            return View(vehicleModel);
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "Edit", vehicleModel) });
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -200,13 +214,9 @@ namespace Concessionaire.Controllers
             return View(vehicle);
         }
 
-        public async Task<IActionResult> AddImage(int? id)
+        [NoDirectAccess]
+        public async Task<IActionResult> AddImage(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             Vehicle vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null)
             {
@@ -242,7 +252,16 @@ namespace Concessionaire.Controllers
                     _context.Add(vehiclePhoto);
                     await _context.SaveChangesAsync();
                     _flashMessage.Confirmation("Imagen adicionada con éxito.");
-                    return RedirectToAction(nameof(Details), new { Id = vehicle.Id });
+                    return Json(new
+                    {
+                        isValid = true,
+                        html = ModalHelper.RenderRazorViewToString(this, "Details", _context.Vehicles
+                            .Include(v => v.VehiclePhotos)
+                            .Include(v => v.Brand)
+                            .Include(v => v.VehicleType)
+                            .FirstOrDefaultAsync(v => v.Id == model.VehicleId))
+                    });
+
                 }
                 catch (Exception exception)
                 {
@@ -250,7 +269,7 @@ namespace Concessionaire.Controllers
                 }
             }
 
-            return View(model);
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddImage", model) });
         }
 
         public async Task<IActionResult> DeleteImage(int? id)
@@ -271,17 +290,13 @@ namespace Concessionaire.Controllers
             await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "products");
             _context.VehiclePhotos.Remove(vehiclePhoto);
             await _context.SaveChangesAsync();
-            _flashMessage.Confirmation("Imagen removida con éxito.");
-            return RedirectToAction(nameof(Details), new { Id = vehiclePhoto.Vehicle.Id });
+            _flashMessage.Info("Registro borrado.");
+            return RedirectToAction(nameof(Details), new { id = vehiclePhoto.Vehicle.Id });
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        [NoDirectAccess]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             Vehicle vehicle = await _context.Vehicles
                 .Include(v => v.VehiclePhotos)
                 .Include(v => v.VehicleType)
@@ -292,30 +307,15 @@ namespace Concessionaire.Controllers
                 return NotFound();
             }
 
-            return View(vehicle);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(Vehicle deleteModel)
-        {
-            Vehicle vehicle = await _context.Vehicles
-                .Include(v => v.VehiclePhotos)
-                .Include(v => v.VehicleType)
-                .Include(v => v.Brand)
-                .FirstOrDefaultAsync(v => v.Id == deleteModel.Id);
-
-            _context.Vehicles.Remove(vehicle);
-            await _context.SaveChangesAsync();
-            _flashMessage.Confirmation("Vehículo borrado con éxito.");
-
             foreach (VehiclePhoto vehiclePhoto in vehicle.VehiclePhotos)
             {
                 await _blobHelper.DeleteBlobAsync(vehiclePhoto.ImageId, "products");
             }
 
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+            _flashMessage.Info("Registro borrado.");
             return RedirectToAction(nameof(Index));
         }
-
     }
 }
