@@ -25,9 +25,10 @@
 <div class="mb-2">
     @foreach (var item in Model.Brands)
     {
-        <span>@item.Name&nbsp;&nbsp;</span>
+        <span> <a href="@Url.Action("Index", "Home", new { searchString = item.Name})" > @item.Name&nbsp;</a></span>
     }
 </div>
+</hr>
 
 <div class="mb-2">
     <a asp-action="Index" asp-route-sortOrder="@ViewData["BrandSortParm"]">Ordenar por Marca</a>&nbsp;&nbsp;

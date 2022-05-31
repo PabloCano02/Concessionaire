@@ -109,25 +109,5 @@ namespace Concessionaire.Controllers
 
             return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", brand) });
         }
-
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Brand brand = await _context.Brands
-                .FirstOrDefaultAsync(b => b.Id == id);
-            if (brand == null)
-            {
-                return NotFound();
-            }
-
-            return View(brand);
-        }
-
     }
 }

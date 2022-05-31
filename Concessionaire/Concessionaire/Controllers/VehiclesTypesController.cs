@@ -109,23 +109,5 @@ namespace Concessionaire.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            VehicleType vehicleType = await _context.VehicleTypes
-                .FirstOrDefaultAsync(vt => vt.Id == id);
-            if (vehicleType == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicleType);
-        }
     }
 }
