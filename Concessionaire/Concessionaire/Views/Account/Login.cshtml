@@ -8,8 +8,8 @@
 
 <div class="row">
     <div class="col-md-4  offset-md-4">
-        <div class="card bg-dark mb-3" style="width: 450px; height: 350px">
-            <h5 class="card-header text-center text-white"><i class="fa-solid fa-envelope text-navy text-white"></i> Iniciar Sesión</h5>
+        <div class="card bg-dark mb-3" style="width: 450px; height: 350px; border-radius: 10px">
+            <h5 class="card-header text-center text-white"><i class="fa-solid fa-user text-navy text-white"></i> Iniciar Sesión</h5>
             <div class="card-body bg-white">
                 <form asp-action="Login">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -31,8 +31,8 @@
                         <span asp-validation-for="RememberMe" class="text-warning"></span>
                     </div>
                     <div class="form-group mt-2">
-                        <button input type="submit" value="Login" class="btn btn-primary btn-block"><i class="fa-solid fa-user"></i> Iniciar Sesión</button>
-                        <a asp-action="Register" class="btn btn-secondary"><i class="fa-solid fa-circle-plus"></i> Registrar Nuevo Usuario</a>
+                        <button input type="submit" value="Login" class="btn btn-primary btn-block"><i class="fa-solid fa-arrow-right-to-bracket"></i> Iniciar Sesión</button>
+                        <a asp-action="Register" class="btn btn-success"><i class="fa-solid fa-circle-plus"></i> Registrar Nuevo Usuario</a>
                     </div>
                 </form>
             </div>
